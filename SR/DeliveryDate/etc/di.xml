@@ -14,4 +14,10 @@
         <plugin name="sr_checkout_layout_processor_add_delivery_block"
                 type="SR\DeliveryDate\Plugin\Checkout\Block\LayoutProcessor" sortOrder="1"/>
     </type>
+
+    <!-- save address extattrs to quote -->
+    <type name="\Magento\Quote\Api\Data\AddressExtensionInterface">
+        <plugin name="sr_AddressExtensionManagement" type="SR\DeliveryDate\Plugin\Quote\Api\AddressExtensionManagement"/>
+    </type>
+
 </config>

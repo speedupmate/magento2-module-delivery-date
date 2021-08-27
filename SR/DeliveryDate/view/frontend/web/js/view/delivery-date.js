@@ -1,18 +1,26 @@
 define([
     'jquery',
     'ko',
-    'Magento_Ui/js/form/element/abstract'
-], function ($, ko, Component) {
+    'underscore',
+    'uiRegistry',
+    'Magento_Ui/js/form/element/abstract',
+    'mage/calendar'
+], function ($, ko, _, uiRegistry, Component) {
     'use strict';
 
     return Component.extend({
         initialize: function () {
             this._super();
+
+            //listen what ajax calls are sent
+            this.addPayloadListener();
+
             var disabled = window.checkoutConfig.shipping.delivery_date.disabled;
             var noday = window.checkoutConfig.shipping.delivery_date.noday;
             var hourMin = parseInt(window.checkoutConfig.shipping.delivery_date.hourMin);
             var hourMax = parseInt(window.checkoutConfig.shipping.delivery_date.hourMax);
             var format = window.checkoutConfig.shipping.delivery_date.format;
+
             if(!format) {
                 format = 'yy-mm-dd';
             }
@@ -72,6 +80,101 @@ define([
             };
 
             return this;
+        },
+
+        addPayloadListener: function() {
+            $.ajaxPrefilter(
+                function ( options, localOptions, jqXHR ) {
+                    this.addPayload(options, localOptions, jqXHR);
+                }.bind(this)
+            );
+        },
+
+        addPayload: function(options, localOptions, jqXHR) {
+
+                //we target following urls
+                var allowed  = ["checkout/onepage/update", "rest/"];
+                //methods
+                var methods = ["post","delete","put"];
+
+                var matches = _.filter(
+                    allowed,
+                    function (seek) {
+                        return options.url.indexOf(seek) !== -1;
+                    }
+                );
+
+                //urls that interest us + methods matched
+                if (matches.length > 0 && methods.indexOf(options.type.toLowerCase()) >= 0) {
+
+                    //keys in payload that interest us
+                    var payloads  = ["addressInformation","billingAddress","shippingAddress"];
+                    var payloadMatches = _.filter(
+                        payloads,
+                        function (seek) {
+                            return options.data.indexOf(seek) !== -1;
+                        }
+                    );
+
+                    //elements/values we seek
+                    var componentName = "checkout.steps.shipping-step.shippingAddress.shippingAdditional.delivery_date.form-fields";
+
+                    //if we have those elemnent/values
+                    uiRegistry.async(componentName)(
+                        function (form) {
+
+                            var newData = {};
+                            var existingData = {};
+
+                            //data object created
+                            _.each(form.elems(),
+                                function(elem){
+                                    newData[elem.index] = (_.isUndefined(elem.value())) ? "" : elem.value();
+                                }.bind(this)
+                            );
+
+                            //if we have payloadmatches and new data
+                            if(!_.isEmpty(payloadMatches) && !_.isEmpty(newData)) {
+
+                                if (_.isString(options.data)) {
+                                //see if this is a json string
+                                    try {
+                                        existingData = JSON.parse(options.data);
+                                    } catch (e) {
+                                        //empty strings, not suitable etc
+                                    }
+                                } else {
+                                    existingData = localOptions.data;
+                                }
+
+                                //for each key we found
+                                _.each(payloadMatches,
+                                    function(value) {
+                                        //merge in our new params
+                                        existingData[value]['extension_attributes'] = this.mergeJson(_.clone(newData), existingData[value]['extension_attributes']);
+                                    }.bind(this)
+                                );
+                                //commit back to data
+                                options.data = JSON.stringify(existingData);
+                            }
+
+                        }.bind(this)
+                    );
+
+                }
+        },
+
+        mergeJson: function (target, add) {
+            for (var key in add) {
+                if (add.hasOwnProperty(key)) {
+                    if (!_.isUndefined(target[key]) && target[key] && _.isObject(target[key]) && _.isObject(add[key])) {
+                        this.mergeJson(target[key], add[key]);
+                    } else if (_.isUndefined(target[key]) || _.isNull(target[key])) {
+                        target[key] = add[key];
+                    }
+                }
+            }
+            return target;
         }
     });
 });

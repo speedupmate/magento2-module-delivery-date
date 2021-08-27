@@ -4,4 +4,8 @@
         <attribute code="delivery_date" type="string"/>
         <attribute code="delivery_comment" type="string"/>
     </extension_attributes>
+    <extension_attributes for="Magento\Quote\Api\Data\AddressInterface">
+        <attribute code="delivery_date" type="string"/>
+        <attribute code="delivery_comment" type="string"/>
+    </extension_attributes>
 </config>
