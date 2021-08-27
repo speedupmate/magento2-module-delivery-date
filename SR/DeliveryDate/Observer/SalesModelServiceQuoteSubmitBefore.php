@@ -5,7 +5,6 @@ use Magento\Framework\Event\Observer as EventObserver;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Model\QuoteRepository;
 use SR\DeliveryDate\Model\Validator;
-use SR\DeliveryDate\Model\Config;
 
 class SalesModelServiceQuoteSubmitBefore implements ObserverInterface
 {
@@ -27,12 +26,10 @@ class SalesModelServiceQuoteSubmitBefore implements ObserverInterface
      */
     public function __construct(
         QuoteRepository $quoteRepository,
-        Validator $validator,
-        Config $config
+        Validator $validator
     ) {
         $this->quoteRepository = $quoteRepository;
         $this->validator = $validator;
-        $this->config = $config;
     }
 
     /**
@@ -47,7 +44,7 @@ class SalesModelServiceQuoteSubmitBefore implements ObserverInterface
         $quote = $this->quoteRepository->get($order->getQuoteId());
         $date = $quote->getDeliveryDate();
 
-        if ($this->config->getRequiredDeliveryDate() && $this->validator->validate($date)) {
+        if($this->validator->validate($date)) {
             $order->setDeliveryDate($date);
         }
 
