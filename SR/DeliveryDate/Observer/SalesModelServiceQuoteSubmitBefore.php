@@ -47,7 +47,7 @@ class SalesModelServiceQuoteSubmitBefore implements ObserverInterface
         $quote = $this->quoteRepository->get($order->getQuoteId());
         $date = $quote->getDeliveryDate();
 
-        if($this->config->getRequiredDeliveryDate() && $this->validator->validate($date)) {
+        if ($this->config->getRequiredDeliveryDate() && $this->validator->validate($date)) {
             $order->setDeliveryDate($date);
         }
 

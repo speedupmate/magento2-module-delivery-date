@@ -1,11 +1,11 @@
 <div id="delivery-date">
-    <strong><?= __('Delivery Date') ?></strong>
-    <span class="price"><?= $block->getDeliveryDate() ?></span>
+    <strong><?= $block->escapeHtml(__('Delivery Date')); ?></strong>
+    <span class="price"><?= $block->escapeHtml($block->getDeliveryDate()); ?></span>
 </div>
 <div id="delivery-comment">
-    <strong><?= __('Comment') ?>:</strong>
+    <strong><?= $block->escapeHtml(__('Comment')); ?>:</strong>
     <br/>
-    <span class="price"><?= $block->getDeliveryComment() ?></span>
+    <span class="price"><?= $block->escapeHtml($block->getDeliveryComment()); ?></span>
 </div>
 <script type="text/javascript">
     require(

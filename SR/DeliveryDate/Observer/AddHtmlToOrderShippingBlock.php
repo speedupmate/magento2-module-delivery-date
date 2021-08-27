@@ -39,10 +39,10 @@ class AddHtmlToOrderShippingBlock implements ObserverInterface
      */
     public function execute(EventObserver $observer)
     {
-        if($observer->getElementName() == 'sales.order.info') {
+        if ($observer->getElementName() == 'sales.order.info') {
             $orderShippingViewBlock = $observer->getLayout()->getBlock($observer->getElementName());
             $order = $orderShippingViewBlock->getOrder();
-            if($order->getDeliveryDate() != '0000-00-00 00:00:00') {
+            if ($order->getDeliveryDate() != '0000-00-00 00:00:00') {
                 $formattedDate = $this->timezone->formatDateTime(
                     $order->getDeliveryDate(),
                     \IntlDateFormatter::MEDIUM,

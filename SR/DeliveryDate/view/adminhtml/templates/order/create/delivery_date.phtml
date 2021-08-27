@@ -1,13 +1,13 @@
 <?php /** @var \SR\DeliveryDate\Block\Adminhtml\DeliveryDate $block */ ?>
 <div class="admin__field">
-    <label for="delivery_date" class="admin__field-label"><span><?= __('Delivery Date') ?></span></label>
+    <label for="delivery_date" class="admin__field-label"><span><?= $block->escapeHtml(__('Delivery Date')); ?></span></label>
     <div class="admin__field-control">
-        <input class="admin__control-text <?php if ($block->getRequiredDeliveryDate()): ?> required-entry <?php endif ?>"
+        <input class="admin__control-text <?php if ($block->getRequiredDeliveryDate()) : ?> required-entry <?php endif ?>"
                type="text" name="delivery_date" id="delivery_date" readonly="true"/>
     </div>
 </div>
 <div class="admin__field field-comment">
-    <label for="delivery_comment" class="admin__field-label"><span><?= __('Comment') ?></span></label>
+    <label for="delivery_comment" class="admin__field-label"><span><?= $block->escapeHtml(__('Comment')) ?></span></label>
     <div class="admin__field-control">
         <textarea
                 id="delivery_comment"
@@ -21,7 +21,7 @@
         'mage/calendar'
     ], function ($) {
         $(document).ready(function () {
-            var config = <?= $block->getConfig() ?>;
+            var config = <?= $block->escapeJs($block->getConfig()) ?>;
             var disabled = config.shipping.delivery_date.disabled;
             var noday = config.shipping.delivery_date.noday;
             var hourMin = parseInt(config.shipping.delivery_date.hourMin);

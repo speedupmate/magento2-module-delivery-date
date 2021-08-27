@@ -103,7 +103,8 @@ class Config
     public function getRequiredDeliveryDate()
     {
         $store = $this->getStoreId();
-        return (bool) $this->scopeConfig->getValue(self::XPATH_REQUIRED_DELIVERY_DATE, ScopeInterface::SCOPE_STORE, $store);
+        return (bool)$this->scopeConfig
+                ->getValue(self::XPATH_REQUIRED_DELIVERY_DATE, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**
@@ -133,7 +134,7 @@ class Config
         $format = $this->getFormat();
 
         $noday = 0;
-        if($disabled == -1) {
+        if ($disabled == -1) {
             $noday = 1;
         }
 
